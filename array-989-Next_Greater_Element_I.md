@@ -9,6 +9,7 @@ class Solution {
     public List<Integer> addToArrayForm(int[] num, int k) {
         int pos = 0;
         int carry = 0;
+        //或许 new ArrayDeque<>()更合适，更被推荐；但要注意它不支持List所以无法随机访问；
         Deque<Integer> res = new LinkedList<>();
         while(pos < num.length || k >= Math.pow(10, pos) || carry > 0){
             int fromNum = pos < num.length?num[num.length - 1 - pos]:0;
