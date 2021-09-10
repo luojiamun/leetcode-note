@@ -4,6 +4,7 @@ Deque, Array遍历；
 注意题目要求，1 <= A.length <= 10000，所以直接做加法是不可能的。
 
 ### 代码
+```java
 class Solution {
     public List<Integer> addToArrayForm(int[] num, int k) {
         int pos = 0;
@@ -21,6 +22,7 @@ class Solution {
         return new ArrayList<>(res);
     }
 }
+```
 
 ### 复杂度
 
