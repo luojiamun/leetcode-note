@@ -84,19 +84,19 @@ class Solution {
             cur = cur.next;
         }
         
-        return preorder(0, length);
+        return inorder(0, length);
     }
     
-    public TreeNode preorder(int left, int right){
+    public TreeNode inorder(int left, int right){
         if(left > right || head == null) return null;
         int mid = left + (right - left) / 2;
-        TreeNode l = preorder(left, mid - 1);
+        TreeNode l = inorder(left, mid - 1);
         
         TreeNode root = new TreeNode(head.val);
         head = head.next;
         
         root.left = l;
-        root.right = preorder(mid + 1, right);
+        root.right = inorder(mid + 1, right);
         
         return root;
     }
