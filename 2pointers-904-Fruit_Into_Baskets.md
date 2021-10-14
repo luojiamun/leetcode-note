@@ -10,27 +10,23 @@
 //直觉解法
 class Solution {
     public int totalFruit(int[] fruits) {
+        int res = 0, left = 0;
         HashMap<Integer, Integer> map = new HashMap<>();
         
-        int left = 0, max = 0, sum = 0;
-            
         for(int i = 0;i < fruits.length;i++){
-            int fruit = fruits[i];
-            map.putIfAbsent(fruit, 0);
-            map.put(fruit, map.get(fruit)+1);
-            sum++;
+            int cur = fruits[i];
+            map.putIfAbsent(cur, 0);
+            map.put(cur, map.get(cur)+1);
+            
             while(map.size() > 2){
-                sum--;
-                int leftFruit = fruits[left++];
-                if(map.get(leftFruit) > 1){
-                    map.put(leftFruit, map.get(leftFruit) - 1);
-                } else {
-                    map.remove(leftFruit);
-                }
+                int leftFruit = fruits[left];
+                map.put(leftFruit, map.get(leftFruit) - 1);
+                if(map.get(leftFruit) == 0) map.remove(leftFruit);
+                left++;
             }
-            max = Math.max(max, sum);
+            res = Math.max(res, i - left + 1);
         }
-        return max; 
+        return res;
     }
 }
 ```
