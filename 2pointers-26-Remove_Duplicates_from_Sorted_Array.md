@@ -40,17 +40,14 @@ class Solution {
 //READER pointer + WRITER pointer;no extra time & space
 class Solution {
     public int removeDuplicates(int[] nums) {
-        if(nums.length == 0) return 0;
-        int pw = 1;
+        int left = 1;
+        
         for(int i = 1;i < nums.length;i++){
-          if(nums[i] == nums[i-1]){
-            continue;
-          } else {
-            nums[pw] = nums[i];
-            pw++;
-          }
+            if(nums[i] != nums[i - 1]){
+                nums[left++] = nums[i];
+            }
         }
-        return pw;
+        return left;
     }
 }
 ```
