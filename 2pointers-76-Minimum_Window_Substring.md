@@ -1,81 +1,106 @@
 ### 思路
 
 - 拿到题的直觉解法
-    - 这个题，看起来很简单，但写起来很繁琐；
-    - 主要的思路是，快慢双指针；
-    - 快指针负责遍历，慢指针负责缩进；
-    - 一个特殊的时点是第一次找到所有覆盖t的序列；
-    - 在此之后就是边走边尝试缩进；
-    - 主要是通过hashmap记录char的预算，多退少补；
-    - 一旦是`找到`的状态，则只有右边有补的，左边才会缩进
+    - 可以直接套用双指针模版，for套while，比较map即可，这样的方式思路最清楚，用来锻炼模版很好，但是复杂度有点高；
+    - 可以进一步优化一下map的比较使得复杂度降低，但需要修改模版
 
 `AC`
 
 
 ### 代码
 ```java
+//模版直接套用
 class Solution {
     public String minWindow(String s, String t) {
-        if(s.equals(t)) return t;
-        
+        int left = 0;
+        int[] res = {0, Integer.MAX_VALUE};
         HashMap<Character, Integer> map = new HashMap<>();
+        HashMap<Character, Integer> source = new HashMap<>();
         
-        for(char c: t.toCharArray()){
-            map.putIfAbsent(c, 0);
-            map.put(c, map.get(c)+1);
+        for(int i = 0;i < t.length();i++){
+            char cur = t.charAt(i);
+            source.putIfAbsent(cur, 0);
+            source.put(cur, source.get(cur)+1);
         }
         
-        int[] min = new int[2];
-        min[0] = -100000;
-        min[1] = 100000;
-        Deque<Tuple> dq = new LinkedList<>();
-        int count = 0;
         for(int i = 0;i < s.length();i++){
-            char curC = s.charAt(i);
+            char cur = s.charAt(i);
+            map.putIfAbsent(cur, 0);
+            map.put(cur, map.get(cur)+1);
             
-            if(map.containsKey(curC)){
-                Tuple tp = new Tuple(curC, i);
-                dq.add(tp);
-                if(map.get(curC) > 0) count++;
-                map.put(curC, map.get(curC) - 1);
-            }
-
-            if(count == t.length()){
-                while(map.get(dq.peekFirst().c) < 0){
-                    Tuple dup = dq.pollFirst();
-                    map.put(dup.c, map.get(dup.c)+1);
+            while(included(map, source)){
+                if(i - left < res[1] - res[0]){
+                    res[0] = left;
+                    res[1] = i;
                 }
-                if(dq.peekLast().i - dq.peekFirst().i < min[1] - min[0]){
-                    min[1] = dq.peekLast().i;
-                    min[0] = dq.peekFirst().i;
-                }
+                char leftChar = s.charAt(left);
+                left++;
+                map.put(leftChar, map.get(leftChar)-1);
             }
         }
-        if(count < t.length()) return "";
         
-        StringBuilder sb = new StringBuilder();
-        
-        for(int i = min[0];i <= min[1];i++){
-            sb.append(s.charAt(i));
-        }
-        return sb.toString();
+        return res[1] == Integer.MAX_VALUE?"":s.substring(res[0], res[1]+1);
     }
     
-    private class Tuple{
-        char c;
-        int i;
-        
-        public Tuple(char c, int i){
-            this.c = c;
-            this.i = i;
+    public boolean included(HashMap<Character, Integer> map, HashMap<Character, Integer> source){
+        for(char key: source.keySet()){
+            if(!map.containsKey(key) || map.get(key) < source.get(key)){
+                return false;
+            }
         }
+        
+        return true;
     }
+}
+//优化比较map
+class Solution {
+    public String minWindow(String s, String t) {
+        int left = 0, budget = 0;
+        int[] res = {0, Integer.MAX_VALUE};
+        HashMap<Character, Integer> map = new HashMap<>();
+        
+        for(int i = 0;i < t.length();i++){
+            char cur = t.charAt(i);
+            map.putIfAbsent(cur, 0);
+            map.put(cur, map.get(cur)+1);
+            budget++;
+        }
+        
+        for(int i = 0;i < s.length();i++){
+            char cur = s.charAt(i);
+            if(map.containsKey(cur)){
+                int latest = map.get(cur);
+                if(latest > 0) budget--;
+                map.put(cur, map.get(cur) - 1);
+            }
+            
+            while(budget <= 0){
+                if(i - left < res[1] - res[0]){
+                    res[0] = left;
+                    res[1] = i;
+                }
+                char leftC = s.charAt(left);
+                if(map.containsKey(leftC)){
+                    map.put(leftC, map.get(leftC) + 1);
+                    if(map.get(leftC) > 0) budget++;
+                }
+                left++;
+            }
+        }
+        
+        return res[1] == Integer.MAX_VALUE?"":s.substring(res[0], res[1]+1);
+    }
+    
 }
 ```
 
 
 ### 复杂度
 
-//双指针
-time: O(长度和)
-space: O(T长度)
+//直接套用模版
+time: O(mn)
+space: O(m+n)
+
+//优化
+time: O(n+m)
+space:O(n)
