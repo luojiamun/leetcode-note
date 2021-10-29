@@ -116,9 +116,6 @@ class Solution {
 
 
 ### 复杂度
-time: O(N)，遍历每个cell
-space: O(N)，最坏情况满格的话每个cell都drill down形成了N层stack
 
-更新时间的方法
-time: O(N^2)因为要重复计算
-space: O(N)
+time: O(N^2)，遍历每个cell
+space: O(N)，最坏情况满格的话每个cell都drill down形成了N层stack
