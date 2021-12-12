@@ -36,7 +36,7 @@ class Solution {
 
 ### 复杂度
 
-k因为是常数，其长度可以忽略。
+k因为是常数，其实其长度可以忽略。
 
 time: O(Math.max(num.length, Math.log10(k)+1))
 space: O(1)，不算结果
