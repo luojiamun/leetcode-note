@@ -1,71 +1,49 @@
 ### 思路
 Array遍历
 
-两次遍历
-- 第一次从左到右，遇到c，将其右边的依次从1-m编号；直到遇到下一个c，重复编号过程。（第一个c左边为未编号状态）
-- 第二次从右到左，遇到c，将其左边当前编号与预计编号比较并取min；第二次编号并会将第一个c左边的编号完成。
+- 思路与解法
+```
+- 左右两边各扫一遍；
+- 第一遍扫出初始编号；
+- 第二遍更新编号找最小值；
+```
 
-Stack
-将s遍历一次
-- 如果当前为c，
-    - pop站内元素，并依次按距离递增编号；直到栈空或栈顶为c；当前位置编号0；将当前位置压入栈
-- 如果当前不为c
-    - 如果栈顶为c，那么当前位置编号1
-    - 否则当前位置编号为前一个位置编号+1；
-    - 将当前位置index 压入栈；
-
+- 心得
+```
+- array的题肯定不会只考array，因为是基础；
+- array一般肯定要考遍历，就像是binary tree；遍历就是左到右，右到左，左右各扫一遍，这是最基本的，可能再有结合双指针/滑动窗口的；总之就是一些结合题目已知条件需要找到合适的便利方式；
+- 这题还可以用stack，边push边更新；
+```
 
 ### 代码
 ```java
 //array遍历
 class Solution {
     public int[] shortestToChar(String s, char c) {
-        int pre = Integer.MIN_VALUE / 2;
         int[] res = new int[s.length()];
+        int ci = 20000;
+        Arrays.fill(res, 20000);
         for(int i = 0;i < s.length();i++){
-            if(s.charAt(i) == c) pre = i;
-            res[i] = i - pre;
+            if(s.charAt(i) == c){
+                ci = 0;
+            }
+            res[i] = Math.min(ci, res[i]);
+            ci++;
         }
         
-        pre = Integer.MAX_VALUE;
         for(int i = s.length() - 1;i >= 0;i--){
-            if(s.charAt(i) == c) pre = i;
-            res[i] = Math.min(res[i], pre - i);
+            if(s.charAt(i) == c){
+                ci = 0;
+            }
+            res[i] = Math.min(ci, res[i]);
+            ci++;
         }
         
         return res;
+      
     }
 }
 
-//stack
-class Solution {
-    public int[] shortestToChar(String s, char c) {
-        Stack<Integer> stack = new Stack<>();
-        int[] res = new int[s.length()];
-        stack.add(0);
-        for(int i = 0;i < s.length();i++){
-            if(s.charAt(i) == c){
-                int pos = 0;
-                while(!stack.isEmpty() && s.charAt(stack.peek()) != c){
-                    int cur = stack.pop();
-                    
-                    res[cur] = res[cur] == 0?++pos:Math.min(++pos, res[cur]);
-                }
-                res[i] = 0;
-                stack.add(i);
-            } else {
-                if(!stack.isEmpty() && s.charAt(stack.peek()) == c){
-                    res[i] = 1;
-                } else if(i > 0 && res[i-1] != 0) {
-                    res[i] = res[i-1] + 1;
-                }
-                stack.add(i);
-            }
-        }
-        
-        return res;
-    }
-}
 ```
 
 ### 复杂度
@@ -73,7 +51,3 @@ class Solution {
 Array遍历
 O(s.length());
 O(1)
-
-Stack
-O(s.length())
-O(N),维护一个栈。
